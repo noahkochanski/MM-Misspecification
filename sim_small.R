@@ -14,3 +14,11 @@ run_sim(alpha = 0.05,
         eq_var = T, 
         scale = c(1,1),
         diffs = seq(0.2, 4, by = 0.1))
+
+
+run_sim(alpha = 0.05, 
+        n = 1000,
+        num_of_sim = 2,
+        eq_var = T, 
+        scale = c(1,1),
+        diffs = seq(0.2, 4, by = 0.1))
