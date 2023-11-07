@@ -14,20 +14,13 @@ sample_from_mixture <- function(d = 4, s = c(1, 2), df = 5, num_samples = 1000){
   return(mm_samples)
 }
 
+
+
+
+
 tmm_dens <- function(y, parameters){
   d = parameters$pig[1]*dt((y - parameters$mean[1])/parameters$sigma[1], df = parameters$df[1]) + parameters$pig[2]*dt((y - parameters$mean[2])/parameters$sigma[2], df = parameters$df[2])
   return(d)
-}
-
-gmm_dens <- function(y, parameters){
-  d = parameters$pro[1]*dnorm(y, mean = parameters$mean[1], sd = parameters$variance$sigmasq) + parameters$pro[2]*dnorm(y, mean = parameters$mean[2], sd = parameters$variance$sigmasq)
-  return(d)
-}
-
-sample_from_fitted_gmm <- function(n = 10000, parameters){
-  g <- rbernoulli(n = n, p = parameters$pro[1])
-  y <- g*rnorm(n = length(g), mean = parameters$mean[1], sd = parameters$variance$sigmasq) + (1-g)*rnorm(n = length(g), mean = parameters$mean[2], sd = parameters$variance$sigmasq)
-  return(y)
 }
 
 sample_from_fitted_tmm <- function(n = 10000, parameters){
@@ -35,6 +28,36 @@ sample_from_fitted_tmm <- function(n = 10000, parameters){
   y <- g*(rt(n = length(g), df = parameters$df[1])*parameters$sigma[1] + parameters$mean[1]) + (1-g)*(rt(n = length(g), df = parameters$df[2])*parameters$sigma[2] + parameters$mean[2])
   return(y)
 }  
+
+
+
+
+
+
+gmm_dens <- function(y, parameters){
+  if(length(parameters$variance$sigmasq) == 1){
+    d = parameters$pro[1]*dnorm(y, mean = parameters$mean[1], sd = parameters$variance$sigmasq) + parameters$pro[2]*dnorm(y, mean = parameters$mean[2], sd = parameters$variance$sigmasq)
+  }else{
+    d = parameters$pro[1]*dnorm(y, mean = parameters$mean[1], sd = parameters$variance$sigmasq[1]) + parameters$pro[2]*dnorm(y, mean = parameters$mean[2], sd = parameters$variance$sigmasq[2])
+  }
+  return(d)
+}
+
+sample_from_fitted_gmm <- function(n = 10000, parameters){
+  g <- rbernoulli(n = n, p = parameters$pro[1])
+  if(length(parameters$variance$sigmasq) == 1){
+    y <- g*rnorm(n = length(g), mean = parameters$mean[1], sd = parameters$variance$sigmasq) + (1-g)*rnorm(n = length(g), mean = parameters$mean[2], sd = parameters$variance$sigmasq)
+  }else{
+    y <- g*rnorm(n = length(g), mean = parameters$mean[1], sd = parameters$variance$sigmasq[1]) + (1-g)*rnorm(n = length(g), mean = parameters$mean[2], sd = parameters$variance$sigmasq[2])
+  }
+  return(y)
+}
+
+
+
+
+
+
 
 calc_kl <- function(gmm, tmm){
   samp <- sample_from_fitted_gmm(parameters = gmm)
