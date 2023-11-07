@@ -17,7 +17,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
 #SBATCH --mem-per-cpu=1000m
-#SBATCH --time=60:00
+#SBATCH --time=120:00
  
 
 ####  Slurm account and partition specification here
