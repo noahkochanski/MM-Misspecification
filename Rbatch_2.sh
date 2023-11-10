@@ -17,7 +17,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
 #SBATCH --mem-per-cpu=1000m
-#SBATCH --time=60:00
+#SBATCH --time=120:00
  
 
 ####  Slurm account and partition specification here
@@ -48,6 +48,6 @@
 
 echo "Running from $(pwd)"
 
-R CMD BATCH --no-restore --no-save --quiet sim_small.R Rbatch_small.out
+R CMD BATCH --no-restore --no-save --quiet sim_2.R Rbatch_2.out
 
 ##  If you copied any files to /tmp, make sure you delete them here!
