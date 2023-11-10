@@ -5,7 +5,7 @@ library(doParallel)
 library(transport)
 source('sim_function.R')
 
-cl <- makeCluster(16)
+cl <- makeCluster(32)
 registerDoParallel(cl)
 
 B = 1000
