@@ -19,13 +19,40 @@ sample_from_mixture <- function(d = 4, s = c(1, 2), df = 5, num_samples = 1000){
 
 
 tmm_dens <- function(y, parameters){
-  d = parameters$pig[1]*dt((y - parameters$mean[1])/parameters$sigma[1], df = parameters$df[1]) + parameters$pig[2]*dt((y - parameters$mean[2])/parameters$sigma[2], df = parameters$df[2])
+  tryCatch(
+    {
+      d = parameters$pig[1]*dt((y - parameters$mean[1])/parameters$sigma[1], df = parameters$df[1]) + parameters$pig[2]*dt((y - parameters$mean[2])/parameters$sigma[2], df = parameters$df[2])
+    },
+    error=function(e) {
+      message('An Error Occurred computing tmm density')
+      print(e)
+    },
+    warning=function(w) {
+      message('A Warning Occurred')
+      print(w)
+      return(NA)
+    }
+  )
   return(d)
 }
 
 sample_from_fitted_tmm <- function(n = 10000, parameters){
   g <- rbernoulli(n = n, p = parameters$pig[1])
-  y <- g*(rt(n = length(g), df = parameters$df[1])*parameters$sigma[1] + parameters$mean[1]) + (1-g)*(rt(n = length(g), df = parameters$df[2])*parameters$sigma[2] + parameters$mean[2])
+  tryCatch(
+    {
+      y <- g*(rt(n = length(g), df = parameters$df[1])*parameters$sigma[1] + parameters$mean[1]) + (1-g)*(rt(n = length(g), df = parameters$df[2])*parameters$sigma[2] + parameters$mean[2])
+    },
+    error=function(e) {
+      message('An Error Occurred sampling from tmm')
+      print(e)
+    },
+    #if a warning occurs, tell me the warning
+    warning=function(w) {
+      message('A Warning Occurred')
+      print(w)
+      return(NA)
+    }
+  )
   return(y)
 }  
 
@@ -35,21 +62,47 @@ sample_from_fitted_tmm <- function(n = 10000, parameters){
 
 
 gmm_dens <- function(y, parameters){
-  if(length(parameters$variance$sigmasq) == 1){
-    d = parameters$pro[1]*dnorm(y, mean = parameters$mean[1], sd = parameters$variance$sigmasq) + parameters$pro[2]*dnorm(y, mean = parameters$mean[2], sd = parameters$variance$sigmasq)
-  }else{
-    d = parameters$pro[1]*dnorm(y, mean = parameters$mean[1], sd = parameters$variance$sigmasq[1]) + parameters$pro[2]*dnorm(y, mean = parameters$mean[2], sd = parameters$variance$sigmasq[2])
-  }
+  tryCatch(
+    {
+      if(length(parameters$variance$sigmasq) == 1){
+        d = parameters$pro[1]*dnorm(y, mean = parameters$mean[1], sd = parameters$variance$sigmasq) + parameters$pro[2]*dnorm(y, mean = parameters$mean[2], sd = parameters$variance$sigmasq)
+      }else{
+        d = parameters$pro[1]*dnorm(y, mean = parameters$mean[1], sd = parameters$variance$sigmasq[1]) + parameters$pro[2]*dnorm(y, mean = parameters$mean[2], sd = parameters$variance$sigmasq[2])
+      }
+    },
+    error=function(e) {
+      message('An Error Occurred computing gmm density')
+      print(e)
+    },
+    warning=function(w) {
+      message('A Warning Occurred')
+      print(w)
+      return(NA)
+    }
+  )
   return(d)
 }
 
 sample_from_fitted_gmm <- function(n = 10000, parameters){
-  g <- rbernoulli(n = n, p = parameters$pro[1])
-  if(length(parameters$variance$sigmasq) == 1){
-    y <- g*rnorm(n = length(g), mean = parameters$mean[1], sd = parameters$variance$sigmasq) + (1-g)*rnorm(n = length(g), mean = parameters$mean[2], sd = parameters$variance$sigmasq)
-  }else{
-    y <- g*rnorm(n = length(g), mean = parameters$mean[1], sd = parameters$variance$sigmasq[1]) + (1-g)*rnorm(n = length(g), mean = parameters$mean[2], sd = parameters$variance$sigmasq[2])
-  }
+  tryCatch(
+    {
+      g <- rbernoulli(n = n, p = parameters$pro[1])
+      if(length(parameters$variance$sigmasq) == 1){
+        y <- g*rnorm(n = length(g), mean = parameters$mean[1], sd = parameters$variance$sigmasq) + (1-g)*rnorm(n = length(g), mean = parameters$mean[2], sd = parameters$variance$sigmasq)
+      }else{
+        y <- g*rnorm(n = length(g), mean = parameters$mean[1], sd = parameters$variance$sigmasq[1]) + (1-g)*rnorm(n = length(g), mean = parameters$mean[2], sd = parameters$variance$sigmasq[2])
+      }
+    },
+    error=function(e) {
+      message('An Error Occurred sampling from gmm')
+      print(e)
+    },
+    warning=function(w) {
+      message('A Warning Occurred')
+      print(w)
+      return(NA)
+    }
+  )
   return(y)
 }
 

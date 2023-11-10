@@ -27,17 +27,49 @@ run_sim <- function(alpha = 0.05,
               D_0 <- data[sampled]
               D_1 <- data[-sampled]
               
+              tryCatch(
+                {tmm_parameters <- teigen(D_1,
+                                          Gs=2,   # two components
+                                          scale=FALSE, dfupdate="numeric",
+                                          models=c("univUU"))$parameters[c('df', 'mean', 'sigma', 'pig')] 
+                },
+                error = function(e){
+                  message('Could not fit TMM')
+                  print(e)
+                },
+                warning = function(w){
+                  message('warning occurred')
+                          print(w)
+                }
+              )
               
-              tmm_parameters <- teigen(D_1,
-                                       Gs=2,   # two components
-                                       scale=FALSE, dfupdate="numeric",
-                                       models=c("univUU"))$parameters[c('df', 'mean', 'sigma', 'pig')] 
               
               if(eq_var == T){
-                gmm_parameters <- densityMclust(D_0, G = 2, modelName = 'E')$parameters
-              
+                tryCatch(
+                  {gmm_parameters <- densityMclust(D_0, G = 2, modelName = 'E')$parameters
+                  },
+                  error = function(e){
+                    message('Could not fit GMM')
+                    print(e)
+                  },
+                  warning = function(w){
+                    message('warning occurred')
+                    print(w)
+                  }
+                )
               }else{
-                gmm_parameters <- densityMclust(D_0, G = 2, modelName = 'V')$parameters
+                tryCatch(
+                  {gmm_parameters <- densityMclust(D_0, G = 2, modelName = 'V')$parameters
+                  },
+                  error = function(e){
+                    message('Could not fit GMM')
+                    print(e)
+                  },
+                  warning = function(w){
+                    message('warning occurred')
+                    print(w)
+                  }
+                )
               }
               
               p1 <- log(tmm_dens(y = D_0, tmm_parameters))
